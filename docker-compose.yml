@@ -1,8 +1,6 @@
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: ghcr.io/jemeyer/ai-maestro-backend:latest
     ports:
       - "3000:3000"
     environment:
@@ -11,9 +9,7 @@ services:
       - db
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: ghcr.io/jemeyer/ai-maestro-frontend:latest
     ports:
       - "80:80"
 
