@@ -1,7 +1,20 @@
-interface Deployment {
+export interface Deployment {
   id: number;
   name: string;
-  model_id: string;
-  worker_addresses: string[];
-  status: "running" | "stopped" | "failed";
+  modelId: string;
+  status: DeploymentStatus;
+  createdAt: Date;
+  updatedAt: Date;
 }
+
+export type DeploymentStatus =
+  | "creating"
+  | "running"
+  | "failed"
+  | "stopped"
+  | "deleted";
+
+export type DeploymentCreate = Omit<
+  Deployment,
+  "id" | "createdAt" | "updatedAt"
+>;
