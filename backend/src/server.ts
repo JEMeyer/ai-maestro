@@ -1,10 +1,6 @@
-// Import this first!
-import "./instrument";
-
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import * as Sentry from "@sentry/node";
-import { initializeSentry } from "./config/sentry";
 import { errorHandler } from "./middleware/errorHandler";
 import { db } from "./db/database";
 import { DeploymentRepository, WorkerRepository, GpuRepository } from "./db";
@@ -30,12 +26,11 @@ export class Server {
   }
 
   private setupMiddleware(): void {
-    initializeSentry(this.app);
+    Sentry.setupExpressErrorHandler(this.app);
 
     this.app.use(cors());
     this.app.use(express.json());
 
-    // Custom error handler
     this.app.use(errorHandler);
   }
 

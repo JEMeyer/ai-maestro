@@ -10,10 +10,7 @@ export class DockerService {
 
     // Initialize connections to GPU servers
     // In production, these would come from environment/config
-    const servers = [
-      { name: "gpu-server-1", host: "tcp://gpu-server-1:2375" },
-      { name: "gpu-server-2", host: "tcp://gpu-server-2:2375" },
-    ];
+    const servers: any[] = [];
 
     for (const server of servers) {
       this.workerServers.set(
@@ -77,7 +74,11 @@ export class DockerService {
 
       for (const containerInfo of containers) {
         const container = docker.getContainer(containerInfo.Id);
-        await container.stop();
+        try {
+          await container.stop();
+        } catch {
+          console.error("Failed to stop container, will remove it anyway");
+        }
         await container.remove();
       }
     } catch (error) {

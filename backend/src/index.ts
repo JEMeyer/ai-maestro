@@ -1,3 +1,6 @@
+// Import this first!
+import "./instrument";
+
 import { Server } from "./server";
 
 async function main() {

@@ -27,6 +27,7 @@ export class RouterService {
     };
 
     try {
+      await this.dockerService.stopContainer(null, RouterService.ROUTER_NAME);
       await this.dockerService.createContainer(null, routerConfig);
     } catch (error) {
       console.error("Failed to initialize router:", (error as Error).message);
