@@ -4,12 +4,12 @@ services:
     working_dir: /app
     volumes:
       - ./backend:/app
-      - /app/node_modules
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-    command: sh -c "yarn install && yarn add nodemon && npx nodemon src/index.js"
+    command: sh -c "yarn dev"
     depends_on:
       - db
 
@@ -18,24 +18,24 @@ services:
     working_dir: /app
     volumes:
       - ./frontend:/app
-      - /app/node_modules
     ports:
       - "5173:5173"
     environment:
       - NODE_ENV=development
-    command: sh -c "yarn install && yarn start"
+    command: sh -c "yarn start"
 
   db:
     image: postgres:17-alpine
     restart: always
     ports:
-      - "5432:5432"
+      - "5432"
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mydb
     volumes:
       - pg_data:/var/lib/postgresql/data
+      - ./backend/db-init-scripts:/docker-entrypoint-initdb.d
 
 volumes:
   pg_data:

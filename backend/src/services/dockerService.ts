@@ -59,34 +59,42 @@ export class DockerService {
     serverName: string | null,
     containerName: string
   ): Promise<void> {
-    try {
-      const docker = serverName
-        ? this.workerServers.get(serverName)
-        : this.localDocker;
-      if (!docker) {
-        throw new Error(`Unknown server: ${serverName}`);
-      }
+    const docker = serverName
+      ? this.workerServers.get(serverName)
+      : this.localDocker;
+    if (!docker) {
+      throw new Error(`Unknown server: ${serverName}`);
+    }
 
-      const containers = await docker.listContainers({
-        all: true,
-        filters: { name: [containerName] },
-      });
+    const containers = await docker.listContainers({
+      all: true,
+      filters: { name: [containerName] },
+    });
 
-      for (const containerInfo of containers) {
-        const container = docker.getContainer(containerInfo.Id);
+    for (const containerInfo of containers) {
+      const container = docker.getContainer(containerInfo.Id);
+
+      // Fetch the current state of the container
+      const inspectResult = await container.inspect();
+      const isRunning = inspectResult.State.Running;
+
+      if (isRunning) {
         try {
           await container.stop();
-        } catch {
-          console.error("Failed to stop container, will remove it anyway");
+        } catch (e) {
+          console.error("Failed to stop() container, will remove() it.", e);
         }
-        await container.remove();
+      } else {
+        console.log(`Container ${containerInfo.Names[0]} is already stopped`);
       }
-    } catch (error) {
-      console.error(
-        `Failed to stop container ${containerName}:`,
-        (error as Error).message
-      );
-      throw new Error(`Container stop failed: ${(error as Error).message}`);
+      try {
+        await container.remove();
+      } catch (e) {
+        console.error(
+          "Failed to remove container, even though it was stopped",
+          e
+        );
+      }
     }
   }
 

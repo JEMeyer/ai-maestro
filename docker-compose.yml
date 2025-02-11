@@ -5,6 +5,8 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - db
 
@@ -17,13 +19,14 @@ services:
     image: postgres:17-alpine
     restart: always
     ports:
-      - "5432:5432"
+      - "5432"
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mydb
     volumes:
       - pg_data:/var/lib/postgresql/data
+      - ./backend/db-init-scripts:/docker-entrypoint-initdb.d
 
 volumes:
   pg_data:

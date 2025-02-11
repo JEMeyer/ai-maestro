@@ -1,4 +1,6 @@
-// Import this first!
+import dotenv from "dotenv";
+dotenv.config();
+
 import "./instrument";
 
 import { Server } from "./server";
