@@ -9,7 +9,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-    command: sh -c "yarn dev"
+    command: sh -c "yarn && yarn dev"
     depends_on:
       - db
 
@@ -22,7 +22,7 @@ services:
       - "5173:5173"
     environment:
       - NODE_ENV=development
-    command: sh -c "yarn start"
+    command: sh -c "yarn && yarn start"
 
   db:
     image: postgres:17-alpine

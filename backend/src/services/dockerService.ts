@@ -38,6 +38,24 @@ export class DockerService {
         throw new Error(`Unknown server: ${serverName}`);
       }
 
+      // Pull since createContainer throws if image doesn't exist. alpine is small for default
+      const image = config.Image ?? "alpine";
+      console.log(`Pulling docker image ${image}... ⏳`);
+      await new Promise((resolve, reject): any =>
+        docker.pull(image, (_err: any, stream: NodeJS.ReadableStream) => {
+          // https://github.com/apocas/dockerode/issues/357
+          docker.modem.followProgress(stream, onFinished);
+          function onFinished(err: any) {
+            if (!err) {
+              resolve(true);
+              return;
+            }
+            reject(err);
+          }
+        })
+      );
+      console.log(`└─ Done`);
+
       const container = await docker.createContainer(config);
       await container.start();
       const info = await container.inspect();
