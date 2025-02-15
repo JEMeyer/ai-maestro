@@ -2,10 +2,13 @@
 COMPOSE_DEV=docker-compose.dev.yml
 
 up-dev:
-	docker compose -f $(COMPOSE_DEV) up --build
+	docker compose -f $(COMPOSE_DEV) up --build -d
 
 down-dev:
 	docker compose -f $(COMPOSE_DEV) down
+
+logs-dev:
+	docker compose -f $(COMPOSE_DEV) logs -f
 
 #################
 

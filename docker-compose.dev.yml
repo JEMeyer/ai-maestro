@@ -19,7 +19,7 @@ services:
     volumes:
       - ./frontend:/app
     ports:
-      - "5173:5173"
+      - "5173:3000"
     environment:
       - NODE_ENV=development
     command: sh -c "yarn && yarn start"
