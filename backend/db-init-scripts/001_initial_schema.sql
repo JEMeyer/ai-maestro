@@ -13,8 +13,6 @@ CREATE TYPE worker_status AS ENUM (
   'stopped'
 );
 
-CREATE TYPE gpu_type AS ENUM ('3090', 'P100');
-
 CREATE TABLE deployments (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -24,7 +22,7 @@ CREATE TABLE deployments (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE gpu_servers (
+CREATE TABLE servers (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     host VARCHAR(255) NOT NULL UNIQUE,
@@ -36,14 +34,13 @@ CREATE TABLE gpus (
     id SERIAL PRIMARY KEY,
     server_id INTEGER NOT NULL REFERENCES gpu_servers(id) ON DELETE CASCADE,
     device_id INTEGER NOT NULL CHECK (device_id >= 0),
-    type gpu_type NOT NULL,
+    gpu_type VARCHAR(255) NOT NULL,
     vram_total INTEGER NOT NULL CHECK (vram_total > 0),
-    max_workers INTEGER NOT NULL CHECK (max_workers > 0),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(server_id, device_id)
 );
 
-CREATE TABLE deployment_workers (
+CREATE TABLE workers (
     id SERIAL PRIMARY KEY,
     deployment_id INTEGER NOT NULL REFERENCES deployments(id) ON DELETE CASCADE,
     gpu_id INTEGER NOT NULL REFERENCES gpus(id) ON DELETE CASCADE,

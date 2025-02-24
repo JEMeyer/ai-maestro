@@ -14,6 +14,7 @@ import {
 
 export class Server {
   private app: express.Application;
+  private dockerService!: DockerService;
   private metricsService!: MetricsService;
   private deploymentService!: DeploymentService;
   private routerService!: RouterService;
@@ -42,12 +43,12 @@ export class Server {
     const serverRepo = new ServerRepository(db);
 
     // Initialize services
-    const dockerService = new DockerService();
-    this.routerService = new RouterService(dockerService);
+    this.dockerService = new DockerService();
+    this.routerService = new RouterService(this.dockerService);
     this.metricsService = new MetricsService(db);
 
     this.deploymentService = new DeploymentService(
-      dockerService,
+      this.dockerService,
       this.routerService,
       db,
       deploymentRepo,
@@ -74,10 +75,10 @@ export class Server {
     });
 
     // API routes
-    this.setupDeploymentRoutes();
+    this.deploymentRoutes();
   }
 
-  private setupDeploymentRoutes(): void {
+  private deploymentRoutes(): void {
     this.app.post(
       "/api/deployments",
       async (req: Request, res: Response, next: NextFunction) => {
