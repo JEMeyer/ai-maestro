@@ -26,18 +26,16 @@ CREATE TABLE servers (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     host VARCHAR(255) NOT NULL UNIQUE,
-    gpu_count INTEGER NOT NULL CHECK (gpu_count > 0),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE gpus (
     id SERIAL PRIMARY KEY,
     server_id INTEGER NOT NULL REFERENCES gpu_servers(id) ON DELETE CASCADE,
-    device_id INTEGER NOT NULL CHECK (device_id >= 0),
+    device_id VARCHAR(255) NOT NULL,
     gpu_type VARCHAR(255) NOT NULL,
     vram_total INTEGER NOT NULL CHECK (vram_total > 0),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(server_id, device_id)
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE workers (
